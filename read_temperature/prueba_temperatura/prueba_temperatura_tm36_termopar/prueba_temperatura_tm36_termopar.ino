@@ -1,16 +1,11 @@
 /* 
-Lectura sensor DS18B20.
-Ejemplo extraído de https://naylampmechatronics.com/blog/46_tutorial-sensor-digital-de-temperatura-ds18b20.html
-También: https://programarfacil.com/blog/arduino-blog/ds18b20-sensor-temperatura-arduino/
+Lectura sensor termistor + tmp36
+https://www.prometec.net/sensor-tmp36/
 
 
 - Montaje.
-Es un sensor que utiliza el protocolo 1 - WIRE para comunicarse y solo necesita un pin de datos para comunicarse y permite conectar más de un sensro en el mismo bus
-Necesitamos una resistencia de 4k7 ohms entre masa y la salida digital.
-
-- Características.
-Resolución programable de 9 hasta 12 bits.
-Cada sensor tiene una dirección única de 64 bits.
+A0: tm36 directamente a la salida analógica del sensor  (10 mV por grado)
+A1: termistor con resistencia en serie 10koh
 
 - librerías necesarias:
 -- One - wire: https://github.com/milesburton/Arduino-Temperature-Control-Library
@@ -49,7 +44,7 @@ void loop() {
   float raw, V, R, logR, R_th, T_kelvin, T_celsius, T_tm36;
   // Obtenemos el valor de la resistencia a partir de la lectura de la tensión sobre ella:
   raw = analogRead(pinTermistor);
-  T_tm36 =  (Vcc * analogRead(pinSensorTM36) / 1024) * 100 - 50;
+  T_tm36 =  (Vcc * analogRead(pinSensorTM36) / 1024) * 100 - 50; // 10 mV por grado, además le tenemos que restar 50, porque el cero es -50
   V = (raw / 1024) * Vcc;
   R = (R10K * V) / (Vcc - V);
   logR = log(R);

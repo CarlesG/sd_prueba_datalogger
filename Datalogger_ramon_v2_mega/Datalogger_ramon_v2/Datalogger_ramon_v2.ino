@@ -1,4 +1,4 @@
-/*
+/* MEGA IMPLEMENTATION 
   SD card datalogger
 
  This example shows how to log data from three analog sensors
@@ -17,6 +17,9 @@
  by Tom Igoe
 
  This example code is in the public domain.
+
+We insert another dispositive, the az-delivery datalogger, that use other libraries
+ https://www.az-delivery.de/es/blogs/azdelivery-blog-fur-arduino-und-raspberry-pi/daten-logger-shield-am-mega-r3
 
  */
 

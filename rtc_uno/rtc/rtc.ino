@@ -1,3 +1,14 @@
+/* USE IN ARDUINO UNO 
+Extracted from: 
+https://www.instructables.com/Tutorial-How-to-Use-Arduino-Data-Logger-Shield-to-/
+https://www.youtube.com/watch?v=wVKZpOUuCzw
+
+libraries:
+https://drive.google.com/file/d/1BlB2s_8aj9bOoKwivhwXBeexrAMOIwqH/view
+
+*/ 
+
+
 #include <DS1307RTC.h>
 #include <Time.h>
 #include <Wire.h>
