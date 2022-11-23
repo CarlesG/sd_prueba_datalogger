@@ -1,5 +1,21 @@
 /* 
-Prueba lectura de termopar conectado con una resistencia de 10k en serie con el termistor. Leemos el divisor de tensión sobre el termistor
+Prueba lectura sensor DS18B20.
+Ejemplo extraído de https://naylampmechatronics.com/blog/46_tutorial-sensor-digital-de-temperatura-ds18b20.html
+
+- Montaje.
+
+Es un sensor que utiliza el protocolo 1 - WIRE para comunicarse y solo necesita un pin de datos para comunicarse y permite conectar más de un sensro en el mismo bus
+Necesitamos una resistencia de 4k7 ohms entre masa y la salida digital.
+Resolución programable de 9 hasta 12 bits.
+Cada sensor tiene una dirección única de 64 bits.
+
+- Características.
+
+CONFIGURACIÓN PUERTOS ARDUINO
+-----------------------------
+
+ANALÓGICO: A0 Termistor.
+
 */
 
 
