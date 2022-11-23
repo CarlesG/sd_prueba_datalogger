@@ -1,3 +1,9 @@
+/* 
+Prueba lectura de termopar conectado con una resistencia de 10k en serie con el termistor. Leemos el divisor de tensión sobre el termistor
+*/
+
+
+
 #include <math.h>
 #define Vcc 5
 #define R10K 10000
