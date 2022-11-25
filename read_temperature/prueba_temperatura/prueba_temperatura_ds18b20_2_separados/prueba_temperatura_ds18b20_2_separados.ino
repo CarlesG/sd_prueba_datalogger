@@ -26,12 +26,13 @@ DIGITALES:
 #include <TimeLib.h> // https://github.com/PaulStoffregen/Time
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#define time_delay 7000 // La temporización no es exacta, tener esto en cuenta. Si colocamos aquí un siete, son ocho segundos de espera entre medida aprox.
+//#define time_delay 1000 // La temporización no es exacta, tener esto en cuenta. Si colocamos aquí un siete, son ocho segundos de espera entre medida aprox. (segundos)
 
 OneWire ourWire1(2); // el pin2 será el bus OneWire
 OneWire ourWire2(3);
 DallasTemperature sensor1(&ourWire1);
 DallasTemperature sensor2(&ourWire2);
+const unsigned long time_delay = 1000;
 
 void setup() {
   Serial.begin(9600);
@@ -46,18 +47,22 @@ void loop() {
   float temp1 = sensor1.getTempCByIndex(0);
 
   sensor2.requestTemperatures(); // Se envía comando para leer la temperatura
-  float temp2 = sensor2.getTempCByIndex(0);
+  float temp2 = sensor2.getTempCByIndex(0); 
 
+  imprimir(temp1, temp2, t);
+  delay(time_delay);
+}
+
+void imprimir(float temp1, float temp2, time_t t){
   Serial.print(t);
+  Serial.print("s. ");
+  //Serial.print(minute(t));
   Serial.print(" T1 = ");
   Serial.print(temp1);
   Serial.print(" C ");
   Serial.print("T2 = ");
   Serial.print(temp2);
-  Serial.print(" C\n");
-  
-  delay(time_delay);
+  Serial.print(" C\n");  
 }
-
 
 
