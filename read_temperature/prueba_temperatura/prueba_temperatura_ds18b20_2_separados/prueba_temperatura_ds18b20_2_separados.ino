@@ -21,26 +21,41 @@ CONFIGURACIÓN PUERTOS ARDUINO
 
 DIGITALES:
 2 : sensor con cápsula acero inoxidable.
-
+3 : sensor sin cápsula de acero inoxidable.
 */
+#include <TimeLib.h> // https://github.com/PaulStoffregen/Time
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#define time_delay 3000
+#define time_delay 7000 // La temporización no es exacta, tener esto en cuenta. Si colocamos aquí un siete, son ocho segundos de espera entre medida aprox.
 
-OneWire ourWire(2); // el pin2 será el bus OneWire
-DallasTemperature sensors(&ourWire);
+OneWire ourWire1(2); // el pin2 será el bus OneWire
+OneWire ourWire2(3);
+DallasTemperature sensor1(&ourWire1);
+DallasTemperature sensor2(&ourWire2);
 
 void setup() {
   Serial.begin(9600);
-  sensors.begin();
+  sensor1.begin();
+  sensor2.begin();
+  //setTime();
 }
 
 void loop() {
-  sensors.requestTemperatures(); // Se envía comando para leer la temperatura
-  float temp = sensors.getTempCByIndex(0);
-  Serial.print("T = ");
-  Serial.print(temp);
+  time_t t = now();
+  sensor1.requestTemperatures(); // Se envía comando para leer la temperatura
+  float temp1 = sensor1.getTempCByIndex(0);
+
+  sensor2.requestTemperatures(); // Se envía comando para leer la temperatura
+  float temp2 = sensor2.getTempCByIndex(0);
+
+  Serial.print(t);
+  Serial.print(" T1 = ");
+  Serial.print(temp1);
+  Serial.print(" C ");
+  Serial.print("T2 = ");
+  Serial.print(temp2);
   Serial.print(" C\n");
+  
   delay(time_delay);
 }
 
