@@ -1,5 +1,5 @@
 /* 
-Lectura de solo un sensor DS18B20 de temperatura.
+Lectura de dos sensores de temperatura DS18B20 .
 Ejemplo extraído de https://naylampmechatronics.com/blog/46_tutorial-sensor-digital-de-temperatura-ds18b20.html (este es con el que estoy trabajando)
 También: https://programarfacil.com/blog/arduino-blog/ds18b20-sensor-temperatura-arduino/
 
