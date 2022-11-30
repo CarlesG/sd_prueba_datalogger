@@ -1,4 +1,10 @@
-/* USE IN ARDUINO UNO 
+/* USE IT IN ARDUINO UNO 
+
+THIS PROGRAM WRITES IN THE SD CARD EACH in
+
+
+
+
 Extracted from: 
 https://www.instructables.com/Tutorial-How-to-Use-Arduino-Data-Logger-Shield-to-/
 https://www.youtube.com/watch?v=wVKZpOUuCzw
@@ -15,9 +21,10 @@ https://drive.google.com/file/d/1BlB2s_8aj9bOoKwivhwXBeexrAMOIwqH/view
 
 File myFile;
 const int chipSelect = 10;
+const int time_write = 3000; // each time we want to write on SD card
 
 String time ; // String of data
-tmElements_t tm;
+tmElements_t tm; // Structure to read RTC fields
 
 
 void setup() {
@@ -29,8 +36,8 @@ void setup() {
 
   if (!SD.begin(chipSelect)) {
     Serial.println("SD Card initialization failed!");
-    time = Now() + " Sensor Value";
-    Serial.println(time);
+    //time = Now() + " Sensor Value";
+    //Serial.println(time);
     return;  
   }
   Serial.println("SD Card OK.");
@@ -41,7 +48,7 @@ void loop() {
   time = Now();
   Serial.println(time);
   WriteText(time);
-  delay(3000);
+  delay(time_write);
 }
 
 /*
@@ -85,7 +92,7 @@ void WriteText(String txt){
 */
 String Now(){
   String time = "";
-  String sep = ";";
+  String sep = ";"; 
   if (RTC.read(tm)) {
     // DATE ----------------------------
     if (tm.Day / 10 == 0 ){
@@ -120,6 +127,7 @@ String Now(){
       time += tm.Second;
     }
     time += sep;
+    // Sensor values to add to time string.
   } 
   else {
     time = "NO";
