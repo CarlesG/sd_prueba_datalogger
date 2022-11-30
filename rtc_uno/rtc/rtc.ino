@@ -16,7 +16,7 @@ https://drive.google.com/file/d/1BlB2s_8aj9bOoKwivhwXBeexrAMOIwqH/view
 File myFile;
 const int chipSelect = 10;
 
-String time ;
+String time ; // String of data
 tmElements_t tm;
 
 
@@ -38,13 +38,13 @@ void setup() {
 }
 
 void loop() {
-  time = Now()+" Sensor Value";
+  time = Now();
   Serial.println(time);
-  WriteText("prueba");
+  WriteText(time);
   delay(3000);
 }
 
-
+/*
 void ReadText(){
   // re-open the file for reading:
   myFile = SD.open("test.txt");
@@ -63,7 +63,12 @@ void ReadText(){
     Serial.println("error opening test.txt");
   }
 }
+*/
 
+/* Function to write a line in the file 
+  INPUT: txt String variable with the info to write
+
+*/
 void WriteText(String txt){
   myFile = SD.open("test.txt", FILE_WRITE);
   if (myFile) {
@@ -76,27 +81,45 @@ void WriteText(String txt){
   }
 }
 
-// Function for write the date and hour of each lecture of RTC
+/* Function for write the date and hour of each lecture in sensors 
+*/
 String Now(){
   String time = "";
+  String sep = ";";
   if (RTC.read(tm)) {
-    //    time = String(tm.Hour+":"+tm.Minute+":"+tm.Secnd+" DAY : "+tm.Day+"/"+tm.Month+"/"+tmYearToCalendar(tm.Year));
-    time+=tm.Hour;
-    time+=":";
+    // DATE ----------------------------
+    if (tm.Day / 10 == 0 ){
+      time += "0" + (String) tm.Day;
+    }else{
+      time += tm.Day;
+    }
+    
+    if (tm.Month / 10 == 0){
+      time += "0" + (String) tm.Month;
+    }
+    else{
+      time += tm.Month;
+    }
+    time += tmYearToCalendar(tm.Year);
+    time += sep;
 
-    time+=tm.Minute;
-    time+=":";
-
-    time+=tm.Second;
-    time+=" DAY : ";
-
-    time+=tm.Day;
-    time+="/";
-
-    time+=tm.Month;
-    time+="/";
-
-    time+=tmYearToCalendar(tm.Year);
+    // HOUR ------------------------------
+    if (tm.Hour / 10 == 0){
+      time += "0" + tm.Hour;
+    }else{
+      time += tm.Hour;      
+    }
+    if (tm.Minute / 10 == 0){
+      time += "0" + (String) tm.Minute;
+    }else{
+      time += tm.Minute;
+    }
+    if (tm.Second / 10 == 0){
+      time += "0" + (String) tm.Second;
+    }else{
+      time += tm.Second;
+    }
+    time += sep;
   } 
   else {
     time = "NO";
