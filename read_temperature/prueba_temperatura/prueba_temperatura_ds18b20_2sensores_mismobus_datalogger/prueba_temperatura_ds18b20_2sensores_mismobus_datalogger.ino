@@ -22,12 +22,21 @@ CONFIGURACIÓN PUERTOS ARDUINO
 DIGITALES:
 2 : sensor con cápsula acero inoxidable (cable de 3 metros). + sensor sin capsula + sensor acero inoxidable (con cable más corto)
 */
-
+#include <DS1307RTC.h>
 #include <TimeLib.h> // https://github.com/PaulStoffregen/Time
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <SD.h>
 //#define time_delay 1000 // La temporización no es exacta, tener esto en cuenta. Si colocamos aquí un siete, son ocho segundos de espera entre medida aprox. (segundos)
-const unsigned long time_delay = 1000;
+const unsigned long time_delay = 3000;
+
+
+File myFile;
+const int chipSelect = 10;
+String time ; // String of data
+tmElements_t tm; // Structure to read RTC fields
 
 OneWire ourWire(2); // el pin2 será el bus OneWire
 DallasTemperature sensors(&ourWire);
@@ -42,20 +51,29 @@ void setup() {
   delay(1000);
   Serial.begin(9600);
   sensors.begin();
+  Serial.println("ArduinoAll DataLogger Shield Test");
+  pinMode(SS, OUTPUT);
+
+  if (!SD.begin(chipSelect)) {
+    Serial.println("SD Card initialization failed!");
+    return;  
+  }
+  Serial.println("SD Card OK.");
  } 
   
-
 void loop() {
   sensors.requestTemperatures(); // Se envía comando para leer la temperatura
   //float temp_inox1 = sensors.getTempC(address_inox1);
   //float temp_inox2 = sensors.getTempC(address_inox2);
-  float temp_red = sensors.getTempC(address_red);
-  float temp_blue = sensors.getTempC(address_blue);
-  float temp_ambiente = sensors.getTempC(address_ambiente);  
+  float temp_red;
+  float temp_blue;
+  float temp_ambiente;
   sensors.setResolution(12); // Set the resolution for the sensors. (9,10,11 and 12 bits)
-
-
+  read_sensors(&temp_red, &temp_blue, &temp_ambiente);
   imprimir(temp_red, temp_blue, temp_ambiente);
+  time = Now();
+  Serial.println(time);
+  WriteText(time);
   delay(time_delay);
 }
 
@@ -70,6 +88,78 @@ void imprimir(float temp1, float temp2, float temp3){
   Serial.print(" Tambiente = ");
   Serial.print(temp3);
   Serial.print(" C\n");   
+}
+
+void read_sensors(float *temp_red, float *temp_blue, float *temp_ambiente){
+  *temp_red = sensors.getTempC(address_red);
+  *temp_blue = sensors.getTempC(address_blue);
+  *temp_ambiente = sensors.getTempC(address_ambiente);  
+}
+
+void WriteText(String txt){
+  myFile = SD.open("test.txt", FILE_WRITE);
+  if (myFile) {
+    myFile.println(txt);
+    myFile.close();
+  } 
+  else {
+    // if the file didn't open, print an error:
+    Serial.println("error opening test.txt");
+  }
+}
+
+String Now(){
+  String time = "";
+  String sep = ";"; 
+  if (RTC.read(tm)) {
+    // DATE ----------------------------
+    if (tm.Day / 10 == 0 ){
+      time += "0" + (String) tm.Day;
+    }else{
+      time += tm.Day;
+    }
+    
+    if (tm.Month / 10 == 0){
+      time += "0" + (String) tm.Month;
+    }
+    else{
+      time += tm.Month;
+    }
+    time += tmYearToCalendar(tm.Year);
+    time += sep;
+
+    // HOUR ------------------------------
+    if (tm.Hour / 10 == 0){
+      time += "0" + tm.Hour;
+    }else{
+      time += tm.Hour;      
+    }
+    if (tm.Minute / 10 == 0){
+      time += "0" + (String) tm.Minute;
+    }else{
+      time += tm.Minute;
+    }
+    if (tm.Second / 10 == 0){
+      time += "0" + (String) tm.Second;
+    }else{
+      time += tm.Second;
+    }
+    time += sep;
+    // Sensor values to add to time string.
+  } 
+  else {
+    time = "NO";
+    if (RTC.chipPresent()) {
+      Serial.println("The DS1307 is stopped.  Please run the SetTime");
+      Serial.println("example to initialize the time and begin running.");
+      Serial.println();
+    } 
+    else {
+      Serial.println("DS1307 read error!  Please check the circuitry.");
+      Serial.println();
+    }
+  }
+  return time;
 }
 
 
