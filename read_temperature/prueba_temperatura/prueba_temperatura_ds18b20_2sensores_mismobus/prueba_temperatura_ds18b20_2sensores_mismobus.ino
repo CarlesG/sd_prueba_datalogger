@@ -34,6 +34,8 @@ DallasTemperature sensors(&ourWire);
 DeviceAddress address_inox1 = {0x28, 0x82, 0xA6, 0x18, 0x0, 0x0, 0x0, 0x11};
 DeviceAddress address_ambiente = {0x28, 0xB5, 0xAB, 0x16, 0xA8, 0x1, 0x3C, 0x8A};
 DeviceAddress address_inox2 = {0x28, 0x64, 0xA3, 0x75, 0x3C, 0x19, 0x1, 0x30};
+DeviceAddress address_red = {0x28, 0x7F, 0x92, 0x16, 0x0, 0x0, 0x0, 0xA7};
+DeviceAddress address_blue = {0x28, 0xED, 0xB2, 0x18, 0x0, 0x0, 0x0, 0x95};
 
 
 void setup() {
@@ -45,22 +47,24 @@ void setup() {
 
 void loop() {
   sensors.requestTemperatures(); // Se envía comando para leer la temperatura
-  float temp_inox1 = sensors.getTempC(address_inox1);
-  float temp_inox2 = sensors.getTempC(address_inox2);
+  //float temp_inox1 = sensors.getTempC(address_inox1);
+  //float temp_inox2 = sensors.getTempC(address_inox2);
+  float temp_red = sensors.getTempC(address_red);
+  float temp_blue = sensors.getTempC(address_blue);
   float temp_ambiente = sensors.getTempC(address_ambiente);  
 
 
 
-  imprimir(temp_inox1, temp_inox2, temp_ambiente);
+  imprimir(temp_red, temp_blue, temp_ambiente);
   delay(time_delay);
 }
 
 void imprimir(float temp1, float temp2, float temp3){
   
-  Serial.print(" Tinox1 = ");
+  Serial.print(" Tred = ");
   Serial.print(temp1);
   Serial.print(" C");
-  Serial.print(" Tinox2 = ");
+  Serial.print(" Tblue = ");
   Serial.print(temp2);
   Serial.print(" C");
   Serial.print(" Tambiente = ");
