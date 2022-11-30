@@ -7,10 +7,8 @@ libraries:
 https://drive.google.com/file/d/1BlB2s_8aj9bOoKwivhwXBeexrAMOIwqH/view
 
 */ 
-
-
 #include <DS1307RTC.h>
-#include <Time.h>
+#include <TimeLib.h>
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
@@ -31,12 +29,12 @@ void setup() {
 
   if (!SD.begin(chipSelect)) {
     Serial.println("SD Card initialization failed!");
-     time = Now()+" Sensor Value";
-  Serial.println(time);
+    time = Now() + " Sensor Value";
+    Serial.println(time);
     return;  
   }
   Serial.println("SD Card OK.");
-  ReadText();
+  //ReadText();
 }
 
 void loop() {
@@ -78,7 +76,7 @@ void WriteText(String txt){
   }
 }
 
-
+// Function for write the date and hour of each lecture of RTC
 String Now(){
   String time = "";
   if (RTC.read(tm)) {
