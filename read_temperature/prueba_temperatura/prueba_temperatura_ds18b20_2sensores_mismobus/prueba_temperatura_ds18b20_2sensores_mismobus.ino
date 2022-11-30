@@ -45,8 +45,8 @@ void setup() {
 
 void loop() {
   sensors.requestTemperatures(); // Se envía comando para leer la temperatura
-  float temp_inox2 = sensors.getTempC(address_inox1);
-  float temp_inox1 = sensors.getTempC(address_inox2);
+  float temp_inox1 = sensors.getTempC(address_inox1);
+  float temp_inox2 = sensors.getTempC(address_inox2);
   float temp_ambiente = sensors.getTempC(address_ambiente);  
 
 
