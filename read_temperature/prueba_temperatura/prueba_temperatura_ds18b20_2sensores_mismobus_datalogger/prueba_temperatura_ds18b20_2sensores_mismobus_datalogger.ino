@@ -29,13 +29,11 @@ DIGITALES:
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
-//#define time_delay 1000 // La temporización no es exacta, tener esto en cuenta. Si colocamos aquí un siete, son ocho segundos de espera entre medida aprox. (segundos)
-const unsigned long time_delay = 3000;
-
 
 File myFile;
-const int chipSelect = 10;
 String time ; // String of data
+const unsigned long time_delay = 300000;
+const int chipSelect = 10;
 tmElements_t tm; // Structure to read RTC fields
 
 OneWire ourWire(2); // el pin2 será el bus OneWire
@@ -51,7 +49,7 @@ void setup() {
   delay(1000);
   Serial.begin(9600);
   sensors.begin();
-  Serial.println("ArduinoAll DataLogger Shield Test");
+  Serial.println("ArduinoAll DataLogger Shield Test with temperature sensors");
   pinMode(SS, OUTPUT);
 
   if (!SD.begin(chipSelect)) {
@@ -70,8 +68,8 @@ void loop() {
   float temp_ambiente;
   sensors.setResolution(12); // Set the resolution for the sensors. (9,10,11 and 12 bits)
   read_sensors(&temp_red, &temp_blue, &temp_ambiente);
-  imprimir(temp_red, temp_blue, temp_ambiente);
-  time = Now();
+  //imprimir(temp_red, temp_blue, temp_ambiente);
+  time = Now(temp_red, temp_blue, temp_ambiente);
   Serial.println(time);
   WriteText(time);
   delay(time_delay);
@@ -108,7 +106,7 @@ void WriteText(String txt){
   }
 }
 
-String Now(){
+String Now(float temp_red, float temp_blue, float temp_ambiente){
   String time = "";
   String sep = ";"; 
   if (RTC.read(tm)) {
@@ -146,6 +144,11 @@ String Now(){
     }
     time += sep;
     // Sensor values to add to time string.
+    time += temp_red;
+    time += sep;
+    time += temp_blue;
+    time += sep;
+    time += temp_ambiente;
   } 
   else {
     time = "NO";
