@@ -1,9 +1,9 @@
 /* USE IT IN ARDUINO UNO 
 
-THIS PROGRAM WRITES IN THE SD CARD EACH in
+THIS PROGRAM WRITES IN THE SD CARD EACH time_write VALUE.
 
-
-
+SET-UP.
+All sensor must go on digital pin 3, because we use ONE-WIRE library.
 
 Extracted from: 
 https://www.instructables.com/Tutorial-How-to-Use-Arduino-Data-Logger-Shield-to-/
