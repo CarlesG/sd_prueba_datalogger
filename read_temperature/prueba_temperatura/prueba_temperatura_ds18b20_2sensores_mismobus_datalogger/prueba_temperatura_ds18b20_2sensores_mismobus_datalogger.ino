@@ -1,3 +1,5 @@
+#include <DS1307RTC.h>
+
 /* 
 Lectura de dos sensores de temperatura DS18B20 .
 Ejemplo extraído de https://naylampmechatronics.com/blog/46_tutorial-sensor-digital-de-temperatura-ds18b20.html (este es con el que estoy trabajando)
@@ -32,7 +34,7 @@ DIGITALES:
 
 File myFile;
 String time ; // String of data
-const unsigned long time_delay = 300000;
+const unsigned long time_delay = 179000;
 const int chipSelect = 10;
 tmElements_t tm; // Structure to read RTC fields
 
@@ -57,6 +59,7 @@ void setup() {
     return;  
   }
   Serial.println("SD Card OK.");
+  
  } 
   
 void loop() {
@@ -73,6 +76,7 @@ void loop() {
   Serial.println(time);
   WriteText(time);
   delay(time_delay);
+  delay(1000);
 }
 
 void imprimir(float temp1, float temp2, float temp3){
@@ -128,7 +132,7 @@ String Now(float temp_red, float temp_blue, float temp_ambiente){
 
     // HOUR ------------------------------
     if (tm.Hour / 10 == 0){
-      time += "0" + tm.Hour;
+      time += "0" + (String) tm.Hour;
     }else{
       time += tm.Hour;      
     }
@@ -149,17 +153,67 @@ String Now(float temp_red, float temp_blue, float temp_ambiente){
     time += temp_blue;
     time += sep;
     time += temp_ambiente;
+    //Serial.println("A");
   } 
   else {
-    time = "NO";
-    if (RTC.chipPresent()) {
-      Serial.println("The DS1307 is stopped.  Please run the SetTime");
-      Serial.println("example to initialize the time and begin running.");
-      Serial.println();
-    } 
-    else {
+    delay(1500);
+    if (RTC.read(tm)) {
+      // DATE ----------------------------
+      if (tm.Day / 10 == 0 ){
+        time += "0" + (String) tm.Day;
+      }else{
+        time += tm.Day;
+      }
+      
+      if (tm.Month / 10 == 0){
+        time += "0" + (String) tm.Month;
+      }
+      else{
+        time += tm.Month;
+      }
+      time += tmYearToCalendar(tm.Year);
+      time += sep;
+
+      // HOUR ------------------------------
+      if (tm.Hour / 10 == 0){
+        time += "0" + (String) tm.Hour;
+      }else{
+        time += tm.Hour;      
+      }
+      if (tm.Minute / 10 == 0){
+        time += "0" + (String) tm.Minute;
+      }else{
+        time += tm.Minute;
+      }
+      if (tm.Second / 10 == 0){
+        time += "0" + (String) tm.Second;
+      }else{
+        time += tm.Second;
+      }
+      time += sep;
+      // Sensor values to add to time string.
+      time += temp_red;
+      time += sep;
+      time += temp_blue;
+      time += sep;
+      time += temp_ambiente;
+    }else{
+      time = "000000;000000;";
+      time += temp_red;
+      time += sep;
+      time += temp_blue;
+      time += sep;
+      time += temp_ambiente;
+      if (RTC.chipPresent()) {
+        Serial.println("The DS1307 is stopped.  Please run the SetTime");
+        Serial.println("example to initialize the time and begin running.");
+        //Serial.println();
+      }    
+      else {
       Serial.println("DS1307 read error!  Please check the circuitry.");
-      Serial.println();
+      //Serial.println();
+      }
+      
     }
   }
   return time;
