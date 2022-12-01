@@ -24,7 +24,8 @@ CONFIGURACIÓN PUERTOS ARDUINO
 DIGITALES:
 2 : sensor con cápsula acero inoxidable (cable de 3 metros). + sensor sin capsula + sensor acero inoxidable (con cable más corto)
 */
-#include <DS1307RTC.h>
+
+#include <DS1307RTC.h> 
 #include <TimeLib.h> // https://github.com/PaulStoffregen/Time
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -78,7 +79,11 @@ void loop() {
   delay(time_delay);
   delay(1000);
 }
-
+/*
+--------------------------------------------- 
+Print the temperature sensors lectures
+---------------------------------------------
+*/
 void imprimir(float temp1, float temp2, float temp3){
   
   Serial.print(" Tred = ");
@@ -92,13 +97,28 @@ void imprimir(float temp1, float temp2, float temp3){
   Serial.print(" C\n");   
 }
 
+/*-------------------------------------------
+Function for read the temperature sensors:
+  * INPUTS (reference of float variables)
+  -------------------------------------------
+    temp_red (reference)
+    temp_blue (reference)
+    temp_ambiente (reference)
+---------------------------------------------
+*/
 void read_sensors(float *temp_red, float *temp_blue, float *temp_ambiente){
   *temp_red = sensors.getTempC(address_red);
   *temp_blue = sensors.getTempC(address_blue);
   *temp_ambiente = sensors.getTempC(address_ambiente);  
 }
 
+/* Function for write the information in a line.
+  * INPUT
+  -------
+    String txt:
+*/
 void WriteText(String txt){
+
   myFile = SD.open("test.txt", FILE_WRITE);
   if (myFile) {
     myFile.println(txt);
@@ -110,7 +130,15 @@ void WriteText(String txt){
   }
 }
 
+/*
+-------------------------------------------------------------------
+Function for write in a string the date and the temperature sensors
+-------------------------------------------------------------------
+*/
 String Now(float temp_red, float temp_blue, float temp_ambiente){
+
+
+
   String time = "";
   String sep = ";"; 
   if (RTC.read(tm)) {
@@ -218,5 +246,59 @@ String Now(float temp_red, float temp_blue, float temp_ambiente){
   }
   return time;
 }
+
+/*
+---------------------------------------------------
+Function for read the time. return it with a String.
+  OUTPUT:
+    String: returns the date with hour in the format
+      (YYYYMMDD_HHMMSS)
+-----------------------------------------------------
+*/
+String read_date(){
+
+  
+  String date = "";
+  String sep = "_";
+  if (RTC.read(tm)) {
+      // DATE ----------------------------
+      if (tm.Day / 10 == 0 ){
+        time += "0" + (String) tm.Day;
+      }else{
+        time += tm.Day;
+      }
+      
+      if (tm.Month / 10 == 0){
+        time += "0" + (String) tm.Month;
+      }
+      else{
+        time += tm.Month;
+      }
+      time += tmYearToCalendar(tm.Year);
+      time += sep;
+
+      // HOUR -----------------------------
+      if (tm.Hour / 10 == 0){
+        time += "0" + (String) tm.Hour;
+      }else{
+        time += tm.Hour;      
+      }
+      if (tm.Minute / 10 == 0){
+        time += "0" + (String) tm.Minute;
+      }else{
+        time += tm.Minute;
+      }
+      if (tm.Second / 10 == 0){
+        time += "0" + (String) tm.Second;
+      }else{
+        time += tm.Second;
+      }
+  }else{
+    date = "error";      
+  }
+  return date;
+}
+
+
 
 
