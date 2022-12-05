@@ -297,3 +297,9 @@ String read_date(){
   }
   return date;
 }
+
+float read_sensor(int pin){
+  float v = analogread(pin);
+  
+  return v;
+}
