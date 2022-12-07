@@ -23,6 +23,9 @@ CONFIGURACIÓN PUERTOS ARDUINO
 
 DIGITALES:
 2 : sensor con cápsula acero inoxidable (cable de 3 metros). + sensor sin capsula + sensor acero inoxidable (con cable más corto)
+
+ANALÓGICOS:
+0 : divisor de tensión que aguanta máximo 25 V. El factor máximo es de 5, con la configuración de las resistencias usadas en el divisor.
 */
 
 #include <DS1307RTC.h> 
@@ -32,9 +35,11 @@ DIGITALES:
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
+#define ANALOG_IN_PIN A0
 
 File myFile;
 String time ; // String of data
+//const unsigned long time_delay = 1000;
 const unsigned long time_delay = 179000;
 const int chipSelect = 10;
 tmElements_t tm; // Structure to read RTC fields
@@ -47,12 +52,16 @@ DeviceAddress address_ambiente = {0x28, 0xB5, 0xAB, 0x16, 0xA8, 0x1, 0x3C, 0x8A}
 DeviceAddress address_red = {0x28, 0x7F, 0x92, 0x16, 0x0, 0x0, 0x0, 0xA7};
 DeviceAddress address_blue = {0x28, 0xED, 0xB2, 0x18, 0x0, 0x0, 0x0, 0x95};
 
+float volatile in_voltage = 0.0;
+int counts_voltage = 0; 
+float const R1 = 30000.0;
+float const R2 = 7500.0;
 
 void setup() {
   delay(1000);
   Serial.begin(9600);
   sensors.begin();
-  Serial.println("ArduinoAll DataLogger Shield Test with temperature sensors");
+  Serial.println("ArduinoAll DataLogger Shield Test with temperature sensors and tension input");
   pinMode(SS, OUTPUT);
 
   if (!SD.begin(chipSelect)) {
@@ -64,6 +73,9 @@ void setup() {
  } 
   
 void loop() {
+  counts_voltage = analogRead(ANALOG_IN_PIN);
+  in_voltage = counts_voltage * ((R1 + R2)/R2) * (5 / 1024.0);
+  //Serial.println(in_voltage);
   sensors.requestTemperatures(); // Se envía comando para leer la temperatura
   //float temp_inox1 = sensors.getTempC(address_inox1);
   //float temp_inox2 = sensors.getTempC(address_inox2);
@@ -73,7 +85,7 @@ void loop() {
   sensors.setResolution(12); // Set the resolution for the sensors. (9,10,11 and 12 bits)
   read_sensors(&temp_red, &temp_blue, &temp_ambiente);
   //imprimir(temp_red, temp_blue, temp_ambiente);
-  time = Now(temp_red, temp_blue, temp_ambiente);
+  time = Now(temp_red, temp_blue, temp_ambiente, in_voltage);
   Serial.println(time);
   WriteText(time);
   delay(time_delay);
@@ -85,7 +97,6 @@ Print the temperature sensors lectures
 ---------------------------------------------
 */
 void imprimir(float temp1, float temp2, float temp3){
-  
   Serial.print(" Tred = ");
   Serial.print(temp1);
   Serial.print(" C");
@@ -135,10 +146,7 @@ void WriteText(String txt){
 Function for write in a string the date and the temperature sensors
 -------------------------------------------------------------------
 */
-String Now(float temp_red, float temp_blue, float temp_ambiente){
-
-
-
+String Now(float temp_red, float temp_blue, float temp_ambiente, float voltage){
   String time = "";
   String sep = ";"; 
   if (RTC.read(tm)) {
@@ -174,14 +182,6 @@ String Now(float temp_red, float temp_blue, float temp_ambiente){
     }else{
       time += tm.Second;
     }
-    time += sep;
-    // Sensor values to add to time string.
-    time += temp_red;
-    time += sep;
-    time += temp_blue;
-    time += sep;
-    time += temp_ambiente;
-    //Serial.println("A");
   } 
   else {
     delay(1500);
@@ -218,20 +218,8 @@ String Now(float temp_red, float temp_blue, float temp_ambiente){
       }else{
         time += tm.Second;
       }
-      time += sep;
-      // Sensor values to add to time string.
-      time += temp_red;
-      time += sep;
-      time += temp_blue;
-      time += sep;
-      time += temp_ambiente;
     }else{
-      time = "000000;000000;";
-      time += temp_red;
-      time += sep;
-      time += temp_blue;
-      time += sep;
-      time += temp_ambiente;
+      time = "000000;000000";
       if (RTC.chipPresent()) {
         Serial.println("The DS1307 is stopped.  Please run the SetTime");
         Serial.println("example to initialize the time and begin running.");
@@ -244,6 +232,16 @@ String Now(float temp_red, float temp_blue, float temp_ambiente){
       
     }
   }
+  time += sep;
+  // Sensor values to add to time string.
+  time += temp_red;
+  time += sep;
+  time += temp_blue;
+  time += sep;
+  
+  time += temp_ambiente;
+  time += sep;
+  time += voltage;
   return time;
 }
 
@@ -256,7 +254,6 @@ Function for read the time. return it with a String.
 -----------------------------------------------------
 */
 String read_date(){
-
   String date = "";
   String sep = "_";
   if (RTC.read(tm)) {
@@ -298,8 +295,5 @@ String read_date(){
   return date;
 }
 
-float read_voltage_sensor(int pin){
-  float v = analogRead(pin);
 
-  return v;
-}
+
