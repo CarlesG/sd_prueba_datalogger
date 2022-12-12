@@ -36,7 +36,7 @@ time_stamp_represent = hours(time_stamp - time_stamp(1));
 t1 = data.temp1;
 t2 = data.temp2;
 t3 = data.temp3;
-figure(1),plot(time_stamp_represent, t1, time_stamp_represent, t2, time_stamp_represent, t3 )
+figure(1),plot(time_stamp_represent, t1, 'r.', time_stamp_represent, t2, 'b.', time_stamp_represent, t3, 'g.')
 legend("red temperature sensor", " blue temperature sensor 2", "ambient temperature sensor")
 xlabel('Hours (h)')
 ylabel("Temperature (ºC)")
