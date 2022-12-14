@@ -28,8 +28,8 @@ ANALÓGICOS:
 0 : divisor de tensión que aguanta máximo 25 V. El factor máximo es de 5, con la configuración de las resistencias usadas en el divisor.
 */
 
-#include <DS1307RTC.h> 
-#include <TimeLib.h> // https://github.com/PaulStoffregen/Time
+#include <DS1307RTC.h>
+#include <TimeLib.h>  // https://github.com/PaulStoffregen/Time
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <Wire.h>
@@ -38,26 +38,29 @@ ANALÓGICOS:
 #define ANALOG_IN_PIN A0
 
 File myFile;
-String time ; // String of data
-//const unsigned long time_delay = 1000;
-const unsigned long time_delay = 179000;
+String time;  // String of data
+//const unsigned long time_delay = 3000;
+const unsigned long time_delay = 179000 - 2350;
 const int chipSelect = 10;
-tmElements_t tm; // Structure to read RTC fields
+tmElements_t tm;  // Structure to read RTC fields
 
-OneWire ourWire(2); // el pin2 será el bus OneWire
+OneWire ourWire(2);  // el pin2 será el bus OneWire
 DallasTemperature sensors(&ourWire);
 //DeviceAddress address_inox1 = {0x28, 0x82, 0xA6, 0x18, 0x0, 0x0, 0x0, 0x11};
-DeviceAddress address_ambiente = {0x28, 0xB5, 0xAB, 0x16, 0xA8, 0x1, 0x3C, 0x8A};
+DeviceAddress address_ambiente = { 0x28, 0xB5, 0xAB, 0x16, 0xA8, 0x1, 0x3C, 0x8A };
 //DeviceAddress address_inox2 = {0x28, 0x64, 0xA3, 0x75, 0x3C, 0x19, 0x1, 0x30};
-DeviceAddress address_red = {0x28, 0x7F, 0x92, 0x16, 0x0, 0x0, 0x0, 0xA7};
-DeviceAddress address_blue = {0x28, 0xED, 0xB2, 0x18, 0x0, 0x0, 0x0, 0x95};
+DeviceAddress address_red = { 0x28, 0x7F, 0x92, 0x16, 0x0, 0x0, 0x0, 0xA7 };
+DeviceAddress address_blue = { 0x28, 0xED, 0xB2, 0x18, 0x0, 0x0, 0x0, 0x95 };
+
+const int ledPin = 7;
 
 float volatile in_voltage = 0.0;
-int counts_voltage = 0; 
+int counts_voltage = 0;
 float const R1 = 30000.0;
 float const R2 = 7500.0;
 
 void setup() {
+  pinMode(7, OUTPUT);  // pin 7 for output of led blink
   delay(1000);
   Serial.begin(9600);
   sensors.begin();
@@ -66,29 +69,30 @@ void setup() {
 
   if (!SD.begin(chipSelect)) {
     Serial.println("SD Card initialization failed!");
-    return;  
+    return;
   }
   Serial.println("SD Card OK.");
-  
- } 
-  
+}
+
 void loop() {
+  int n_times = 3;
   counts_voltage = analogRead(ANALOG_IN_PIN);
-  in_voltage = counts_voltage * ((R1 + R2)/R2) * (5 / 1024.0);
+  in_voltage = counts_voltage * ((R1 + R2) / R2) * (5 / 1024.0);
   //Serial.println(in_voltage);
-  sensors.requestTemperatures(); // Se envía comando para leer la temperatura
+  sensors.requestTemperatures();  // Se envía comando para leer la temperatura
   //float temp_inox1 = sensors.getTempC(address_inox1);
   //float temp_inox2 = sensors.getTempC(address_inox2);
   float temp_red;
   float temp_blue;
   float temp_ambiente;
-  sensors.setResolution(12); // Set the resolution for the sensors. (9,10,11 and 12 bits)
+  sensors.setResolution(12);  // Set the resolution for the sensors. (9,10,11 and 12 bits)
   read_sensors(&temp_red, &temp_blue, &temp_ambiente);
   //imprimir(temp_red, temp_blue, temp_ambiente);
   time = Now(temp_red, temp_blue, temp_ambiente, in_voltage);
   Serial.println(time);
   WriteText(time);
   delay(time_delay);
+  blink(n_times);
   delay(1000);
 }
 /*
@@ -96,7 +100,7 @@ void loop() {
 Print the temperature sensors lectures
 ---------------------------------------------
 */
-void imprimir(float temp1, float temp2, float temp3){
+void imprimir(float temp1, float temp2, float temp3) {
   Serial.print(" Tred = ");
   Serial.print(temp1);
   Serial.print(" C");
@@ -105,7 +109,7 @@ void imprimir(float temp1, float temp2, float temp3){
   Serial.print(" C");
   Serial.print(" Tambiente = ");
   Serial.print(temp3);
-  Serial.print(" C\n");   
+  Serial.print(" C\n");
 }
 
 /*-------------------------------------------
@@ -117,10 +121,10 @@ Function for read the temperature sensors:
     temp_ambiente (reference)
 ---------------------------------------------
 */
-void read_sensors(float *temp_red, float *temp_blue, float *temp_ambiente){
+void read_sensors(float *temp_red, float *temp_blue, float *temp_ambiente) {
   *temp_red = sensors.getTempC(address_red);
   *temp_blue = sensors.getTempC(address_blue);
-  *temp_ambiente = sensors.getTempC(address_ambiente);  
+  *temp_ambiente = sensors.getTempC(address_ambiente);
 }
 
 /* Function for write the information in a line.
@@ -128,14 +132,13 @@ void read_sensors(float *temp_red, float *temp_blue, float *temp_ambiente){
   -------
     String txt:
 */
-void WriteText(String txt){
+void WriteText(String txt) {
 
   myFile = SD.open("test.txt", FILE_WRITE);
   if (myFile) {
     myFile.println(txt);
     myFile.close();
-  } 
-  else {
+  } else {
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
   }
@@ -146,90 +149,85 @@ void WriteText(String txt){
 Function for write in a string the date and the temperature sensors
 -------------------------------------------------------------------
 */
-String Now(float temp_red, float temp_blue, float temp_ambiente, float voltage){
+String Now(float temp_red, float temp_blue, float temp_ambiente, float voltage) {
   String time = "";
-  String sep = ";"; 
+  String sep = ";";
   if (RTC.read(tm)) {
     // DATE ----------------------------
-    if (tm.Day / 10 == 0 ){
-      time += "0" + (String) tm.Day;
-    }else{
+    if (tm.Day / 10 == 0) {
+      time += "0" + (String)tm.Day;
+    } else {
       time += tm.Day;
     }
-    
-    if (tm.Month / 10 == 0){
-      time += "0" + (String) tm.Month;
-    }
-    else{
+
+    if (tm.Month / 10 == 0) {
+      time += "0" + (String)tm.Month;
+    } else {
       time += tm.Month;
     }
     time += tmYearToCalendar(tm.Year);
     time += sep;
 
     // HOUR ------------------------------
-    if (tm.Hour / 10 == 0){
-      time += "0" + (String) tm.Hour;
-    }else{
-      time += tm.Hour;      
+    if (tm.Hour / 10 == 0) {
+      time += "0" + (String)tm.Hour;
+    } else {
+      time += tm.Hour;
     }
-    if (tm.Minute / 10 == 0){
-      time += "0" + (String) tm.Minute;
-    }else{
+    if (tm.Minute / 10 == 0) {
+      time += "0" + (String)tm.Minute;
+    } else {
       time += tm.Minute;
     }
-    if (tm.Second / 10 == 0){
-      time += "0" + (String) tm.Second;
-    }else{
+    if (tm.Second / 10 == 0) {
+      time += "0" + (String)tm.Second;
+    } else {
       time += tm.Second;
     }
-  } 
-  else {
+  } else {
     delay(1500);
     if (RTC.read(tm)) {
       // DATE ----------------------------
-      if (tm.Day / 10 == 0 ){
-        time += "0" + (String) tm.Day;
-      }else{
+      if (tm.Day / 10 == 0) {
+        time += "0" + (String)tm.Day;
+      } else {
         time += tm.Day;
       }
-      
-      if (tm.Month / 10 == 0){
-        time += "0" + (String) tm.Month;
-      }
-      else{
+
+      if (tm.Month / 10 == 0) {
+        time += "0" + (String)tm.Month;
+      } else {
         time += tm.Month;
       }
       time += tmYearToCalendar(tm.Year);
       time += sep;
 
       // HOUR ------------------------------
-      if (tm.Hour / 10 == 0){
-        time += "0" + (String) tm.Hour;
-      }else{
-        time += tm.Hour;      
+      if (tm.Hour / 10 == 0) {
+        time += "0" + (String)tm.Hour;
+      } else {
+        time += tm.Hour;
       }
-      if (tm.Minute / 10 == 0){
-        time += "0" + (String) tm.Minute;
-      }else{
+      if (tm.Minute / 10 == 0) {
+        time += "0" + (String)tm.Minute;
+      } else {
         time += tm.Minute;
       }
-      if (tm.Second / 10 == 0){
-        time += "0" + (String) tm.Second;
-      }else{
+      if (tm.Second / 10 == 0) {
+        time += "0" + (String)tm.Second;
+      } else {
         time += tm.Second;
       }
-    }else{
+    } else {
       time = "000000;000000";
       if (RTC.chipPresent()) {
         Serial.println("The DS1307 is stopped.  Please run the SetTime");
         Serial.println("example to initialize the time and begin running.");
         //Serial.println();
-      }    
-      else {
-      Serial.println("DS1307 read error!  Please check the circuitry.");
-      //Serial.println();
+      } else {
+        Serial.println("DS1307 read error!  Please check the circuitry.");
+        //Serial.println();
       }
-      
     }
   }
   time += sep;
@@ -238,7 +236,7 @@ String Now(float temp_red, float temp_blue, float temp_ambiente, float voltage){
   time += sep;
   time += temp_blue;
   time += sep;
-  
+
   time += temp_ambiente;
   time += sep;
   time += voltage;
@@ -253,47 +251,54 @@ Function for read the time. return it with a String.
       (YYYYMMDD_HHMMSS)
 -----------------------------------------------------
 */
-String read_date(){
+String read_date() {
   String date = "";
   String sep = "_";
   if (RTC.read(tm)) {
-      // DATE ----------------------------
-      if (tm.Day / 10 == 0 ){
-        time += "0" + (String) tm.Day;
-      }else{
-        time += tm.Day;
-      }
-      
-      if (tm.Month / 10 == 0){
-        time += "0" + (String) tm.Month;
-      }
-      else{
-        time += tm.Month;
-      }
-      time += tmYearToCalendar(tm.Year);
-      time += sep;
+    // DATE ----------------------------
+    if (tm.Day / 10 == 0) {
+      time += "0" + (String)tm.Day;
+    } else {
+      time += tm.Day;
+    }
 
-      // HOUR -----------------------------
-      if (tm.Hour / 10 == 0){
-        time += "0" + (String) tm.Hour;
-      }else{
-        time += tm.Hour;      
-      }
-      if (tm.Minute / 10 == 0){
-        time += "0" + (String) tm.Minute;
-      }else{
-        time += tm.Minute;
-      }
-      if (tm.Second / 10 == 0){
-        time += "0" + (String) tm.Second;
-      }else{
-        time += tm.Second;
-      }
-  }else{
-    date = "error";      
+    if (tm.Month / 10 == 0) {
+      time += "0" + (String)tm.Month;
+    } else {
+      time += tm.Month;
+    }
+    time += tmYearToCalendar(tm.Year);
+    time += sep;
+
+    // HOUR -----------------------------
+    if (tm.Hour / 10 == 0) {
+      time += "0" + (String)tm.Hour;
+    } else {
+      time += tm.Hour;
+    }
+    if (tm.Minute / 10 == 0) {
+      time += "0" + (String)tm.Minute;
+    } else {
+      time += tm.Minute;
+    }
+    if (tm.Second / 10 == 0) {
+      time += "0" + (String)tm.Second;
+    } else {
+      time += tm.Second;
+    }
+  } else {
+    date = "error";
   }
   return date;
 }
 
-
-
+/*Function that blinks ntimes  */
+void blink(int ntimes) {
+  for (int i = 0; i < ntimes; i++){
+    
+    digitalWrite(ledPin, HIGH);
+    delay(250);
+    digitalWrite(ledPin, LOW);
+    delay(500);
+    }
+}
