@@ -23,7 +23,7 @@ CONFIGURACIÓN PUERTOS ARDUINO
 
 DIGITALES:
 2 : sensor con cápsula acero inoxidable (cable de 3 metros). + sensor sin capsula + sensor acero inoxidable (con cable más corto)
-
+7:  pin digital 7 para el parpadeo del led.
 ANALÓGICOS:
 0 : divisor de tensión que aguanta máximo 25 V. El factor máximo es de 5, con la configuración de las resistencias usadas en el divisor.
 */
@@ -91,8 +91,8 @@ void loop() {
   time = Now(temp_red, temp_blue, temp_ambiente, in_voltage);
   Serial.println(time);
   WriteText(time);
-  delay(time_delay);
   blink(n_times);
+  delay(time_delay);
   delay(1000);
 }
 /*
@@ -295,7 +295,6 @@ String read_date() {
 /*Function that blinks ntimes  */
 void blink(int ntimes) {
   for (int i = 0; i < ntimes; i++){
-    
     digitalWrite(ledPin, HIGH);
     delay(250);
     digitalWrite(ledPin, LOW);
