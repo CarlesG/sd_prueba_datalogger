@@ -40,7 +40,8 @@ ANALÓGICOS:
 File myFile;
 String time;  // String of data
 //const unsigned long time_delay = 3000;
-const unsigned long time_delay = 179000 - 2350;
+const int n_times = 3;
+const unsigned long time_delay = 179000 - (n_times * 750) + 1000; //time_delay between measures of 3 minutes with the blink time in consideration.
 const int chipSelect = 10;
 tmElements_t tm;  // Structure to read RTC fields
 
@@ -52,7 +53,7 @@ DeviceAddress address_ambiente = { 0x28, 0xB5, 0xAB, 0x16, 0xA8, 0x1, 0x3C, 0x8A
 DeviceAddress address_red = { 0x28, 0x7F, 0x92, 0x16, 0x0, 0x0, 0x0, 0xA7 };
 DeviceAddress address_blue = { 0x28, 0xED, 0xB2, 0x18, 0x0, 0x0, 0x0, 0x95 };
 
-const int ledPin = 7;
+const int ledPin = 3;
 
 float volatile in_voltage = 0.0;
 int counts_voltage = 0;
@@ -75,7 +76,7 @@ void setup() {
 }
 
 void loop() {
-  int n_times = 3;
+  
   counts_voltage = analogRead(ANALOG_IN_PIN);
   in_voltage = counts_voltage * ((R1 + R2) / R2) * (5 / 1024.0);
   //Serial.println(in_voltage);
