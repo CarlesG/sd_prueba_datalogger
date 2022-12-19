@@ -1,5 +1,3 @@
-#include <DS1307RTC.h>
-#include "LowPower.h"
 /* 
 Lectura de dos sensores de temperatura DS18B20 .
 Ejemplo extraído de https://naylampmechatronics.com/blog/46_tutorial-sensor-digital-de-temperatura-ds18b20.html (este es con el que estoy trabajando)
@@ -27,7 +25,8 @@ DIGITALES:
 ANALÓGICOS:
 0 : divisor de tensión que aguanta máximo 25 V. El factor máximo es de 5, con la configuración de las resistencias usadas en el divisor.
 */
-
+#include "LowPower.h"
+//#include "ArduinoLowPower.h"
 #include <DS1307RTC.h>
 #include <TimeLib.h>  // https://github.com/PaulStoffregen/Time
 #include <OneWire.h>
@@ -60,7 +59,7 @@ float const R1 = 30000.0;
 float const R2 = 7500.0;
 
 void setup() {
-  pinMode(7, OUTPUT);  // pin 7 for output of led blink
+  //pinMode(7, OUTPUT);  // pin 7 for output of led blink
  
   Serial.begin(9600);
   delay(2000);
@@ -95,7 +94,7 @@ void loop() {
   WriteText(time);
   blink(n_times);
   // Arduino sleep mode. (3 minuts)
-  for (int i = 0; i < 31 ; i++){
+  for (int i = 0; i < 30 ; i++){
     LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
     //LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, SPI_OFF, USART0_OFF, TWI_OFF);
   }
