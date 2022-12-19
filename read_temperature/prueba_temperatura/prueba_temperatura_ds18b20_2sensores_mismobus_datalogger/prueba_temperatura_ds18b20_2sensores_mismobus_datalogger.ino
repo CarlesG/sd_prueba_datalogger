@@ -1,5 +1,5 @@
 #include <DS1307RTC.h>
-
+#include "LowPower.h"
 /* 
 Lectura de dos sensores de temperatura DS18B20 .
 Ejemplo extraído de https://naylampmechatronics.com/blog/46_tutorial-sensor-digital-de-temperatura-ds18b20.html (este es con el que estoy trabajando)
@@ -39,8 +39,8 @@ ANALÓGICOS:
 
 File myFile;
 String time;  // String of data
-//const unsigned long time_delay = 3000;
-const unsigned long time_delay = 179000 - 2350;
+const unsigned long time_delay = 1000;
+//const unsigned long time_delay = 179000 - 2350;
 const int chipSelect = 10;
 tmElements_t tm;  // Structure to read RTC fields
 
@@ -52,7 +52,7 @@ DeviceAddress address_ambiente = { 0x28, 0xB5, 0xAB, 0x16, 0xA8, 0x1, 0x3C, 0x8A
 DeviceAddress address_red = { 0x28, 0x7F, 0x92, 0x16, 0x0, 0x0, 0x0, 0xA7 };
 DeviceAddress address_blue = { 0x28, 0xED, 0xB2, 0x18, 0x0, 0x0, 0x0, 0x95 };
 
-const int ledPin = 7;
+const int ledPin = 3;
 
 float volatile in_voltage = 0.0;
 int counts_voltage = 0;
@@ -61,8 +61,9 @@ float const R2 = 7500.0;
 
 void setup() {
   pinMode(7, OUTPUT);  // pin 7 for output of led blink
-  delay(1000);
+ 
   Serial.begin(9600);
+  delay(2000);
   sensors.begin();
   Serial.println("ArduinoAll DataLogger Shield Test with temperature sensors and tension input");
   pinMode(SS, OUTPUT);
@@ -75,6 +76,7 @@ void setup() {
 }
 
 void loop() {
+
   int n_times = 3;
   counts_voltage = analogRead(ANALOG_IN_PIN);
   in_voltage = counts_voltage * ((R1 + R2) / R2) * (5 / 1024.0);
@@ -92,7 +94,12 @@ void loop() {
   Serial.println(time);
   WriteText(time);
   blink(n_times);
-  delay(time_delay);
+  // Arduino sleep mode. (3 minuts)
+  for (int i = 0; i < 31 ; i++){
+    LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+    //LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, SPI_OFF, USART0_OFF, TWI_OFF);
+  }
+  //delay(time_delay);
   delay(1000);
 }
 /*
