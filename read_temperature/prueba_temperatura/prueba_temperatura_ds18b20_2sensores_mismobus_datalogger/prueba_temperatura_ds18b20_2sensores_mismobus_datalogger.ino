@@ -25,6 +25,7 @@ DIGITALES:
 ANALÓGICOS:
 0 : divisor de tensión que aguanta máximo 25 V. El factor máximo es de 5, con la configuración de las resistencias usadas en el divisor.
 */
+#include <avr/sleep.h>
 #include "LowPower.h"
 //#include "ArduinoLowPower.h"
 #include <DS1307RTC.h>
@@ -94,10 +95,7 @@ void loop() {
   WriteText(time);
   blink(n_times);
   // Arduino sleep mode. (3 minuts)
-  for (int i = 0; i < 30 ; i++){
-    LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
-    //LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, SPI_OFF, USART0_OFF, TWI_OFF);
-  }
+  sleep(240);
   //delay(time_delay);
   delay(1000);
 }
@@ -144,6 +142,7 @@ void WriteText(String txt) {
   if (myFile) {
     myFile.println(txt);
     myFile.close();
+    //myFile.sync();
   } else {
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
@@ -311,18 +310,22 @@ void blink(int ntimes) {
 void sleep(int sec) {
   while (sec >= 8) {
     LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+    //LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, SPI_OFF, USART0_OFF, TWI_OFF);
     sec -= 8;
   }
   if (sec >= 4) {
     LowPower.powerDown(SLEEP_4S, ADC_OFF, BOD_OFF);
+    //LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, SPI_OFF, USART0_OFF, TWI_OFF);
     sec -= 4;
   }
   if (sec >= 2) {
     LowPower.powerDown(SLEEP_2S, ADC_OFF, BOD_OFF);
+    //LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, SPI_OFF, USART0_OFF, TWI_OFF);
     sec -= 2;
   }
   if (sec >= 1) {
     LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
+    //LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, SPI_OFF, USART0_OFF, TWI_OFF);
     sec -= 1;
   }
  // sendSignal();
