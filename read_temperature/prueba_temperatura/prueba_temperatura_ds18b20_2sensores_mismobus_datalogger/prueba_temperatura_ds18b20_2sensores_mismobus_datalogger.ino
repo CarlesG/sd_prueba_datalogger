@@ -307,3 +307,23 @@ void blink(int ntimes) {
     delay(500);
     }
 }
+
+void sleep(int sec) {
+  while (sec >= 8) {
+    LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+    sec -= 8;
+  }
+  if (sec >= 4) {
+    LowPower.powerDown(SLEEP_4S, ADC_OFF, BOD_OFF);
+    sec -= 4;
+  }
+  if (sec >= 2) {
+    LowPower.powerDown(SLEEP_2S, ADC_OFF, BOD_OFF);
+    sec -= 2;
+  }
+  if (sec >= 1) {
+    LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
+    sec -= 1;
+  }
+ // sendSignal();
+}
