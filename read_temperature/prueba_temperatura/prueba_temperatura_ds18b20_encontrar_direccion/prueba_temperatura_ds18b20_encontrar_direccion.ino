@@ -1,3 +1,5 @@
+
+
 /* 
 ESTE PROGRAMA SIRVE PARA AVERIGUAR LA DIRECCIÓN DE CADA SENSOR, CONECTADO AL PIN CORRESPONDIENTE ONE - WIRE
 En este caso el pin 2 digital.
@@ -17,10 +19,10 @@ DIGITALES:
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-OneWire ourWire(2); // el pin2 será el bus OneWire
+OneWire ourWire(4); // el pin2 será el bus OneWire
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 void loop() {

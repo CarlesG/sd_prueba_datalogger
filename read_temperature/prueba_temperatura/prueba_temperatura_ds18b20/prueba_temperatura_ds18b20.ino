@@ -27,7 +27,7 @@ DIGITALES:
 #include <DallasTemperature.h>
 #define time_delay 3000
 
-OneWire ourWire(2); // el pin2 será el bus OneWire
+OneWire ourWire(4); // el pin4 será el bus OneWire
 DallasTemperature sensors(&ourWire);
 
 void setup() {
@@ -43,6 +43,3 @@ void loop() {
   Serial.print(" C\n");
   delay(time_delay);
 }
-
-
-
