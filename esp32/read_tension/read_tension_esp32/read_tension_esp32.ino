@@ -1,8 +1,8 @@
 
+
 /* Conectamos un sensor de tensión, que es un divisor de tensión, no obstante, tenemos que aplicar un factor de corrección.*/
 #define ANALOG_IN_PIN 2
-
-
+                                         
 float volatile in_voltage = 0.0;
 int counts_voltage = 0;
 float const R1 = 30000.0;
