@@ -23,9 +23,9 @@ DIGITALES:
 2 : sensor con cápsula acero inoxidable.
 3 : sensor sin cápsula de acero inoxidable.
 */
-#include <TimeLib.h> // https://github.com/PaulStoffregen/Time
-#include <OneWire.h>
-#include <DallasTemperature.h>
+#include <TimeLib.h>           //https://github.com/PaulStoffregen/Time
+#include <OneWire.h>            
+#include <DallasTemperature.h> //https://github.com/milesburton/Arduino-Temperature-Control-Library
 //#define time_delay 1000 // La temporización no es exacta, tener esto en cuenta. Si colocamos aquí un siete, son ocho segundos de espera entre medida aprox. (segundos)
 
 OneWire ourWire1(2); // el pin2 será el bus OneWire

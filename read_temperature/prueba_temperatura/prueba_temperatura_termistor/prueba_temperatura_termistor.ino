@@ -1,6 +1,7 @@
 /* 
 Prueba lectura de termopar conectado con una resistencia de 10k en serie con el termistor. Leemos el divisor de tensión sobre el termistor
-
+We find an example on the next [link](https://www.luisllamas.es/medir-temperatura-con-arduino-y-termistor-mf52/)
+He uses an MF52 10 KOHM.
 CONFIGURACIÓN PUERTOS ARDUINO
 -----------------------------
 

@@ -1,5 +1,3 @@
-#include <DS1307RTC.h>
-
 /* 
 Lectura de dos sensores de temperatura DS18B20 .
 Ejemplo extraído de https://naylampmechatronics.com/blog/46_tutorial-sensor-digital-de-temperatura-ds18b20.html (este es con el que estoy trabajando)
@@ -14,7 +12,7 @@ Resolución programable de 9 hasta 12 bits.
 Cada sensor tiene una dirección única de 64 bits.
 
 - Librerías necesarias:
--- One - wire: https://github.com/milesburton/Arduino-Temperature-Control-Library
+-- One - wire: https://github.com/PaulStoffregen/OneWire
 -- DallasTemperature: https://github.com/milesburton/Arduino-Temperature-Control-Library
 Para más información de la libreria, mirar el siguiente enlace: http://www.milesburton.com/Dallas_Temperature_Control_Library
 
@@ -28,10 +26,10 @@ ANALÓGICOS:
 0 : divisor de tensión que aguanta máximo 25 V. El factor máximo es de 5, con la configuración de las resistencias usadas en el divisor.
 */
 
-#include <DS1307RTC.h>
-#include <TimeLib.h>  // https://github.com/PaulStoffregen/Time
-#include <OneWire.h>
-#include <DallasTemperature.h>
+#include <DS1307RTC.h>         //https://github.com/PaulStoffregen/DS1307RTC
+#include <TimeLib.h>           //https://github.com/PaulStoffregen/Time
+#include <OneWire.h>           //https://github.com/PaulStoffregen/OneWire
+#include <DallasTemperature.h> //https://github.com/milesburton/Arduino-Temperature-Control-Library
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>

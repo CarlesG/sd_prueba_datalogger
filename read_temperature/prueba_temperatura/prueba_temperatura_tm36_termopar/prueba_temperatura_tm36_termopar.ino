@@ -6,17 +6,6 @@ https://www.prometec.net/sensor-tmp36/
 - Montaje.
 A0: tm36 directamente a la salida analógica del sensor  (10 mV por grado)
 A1: termistor con resistencia en serie 10koh
-
-- librerías necesarias:
--- One - wire: https://github.com/milesburton/Arduino-Temperature-Control-Library
--- DallasTemperature: https://github.com/milesburton/Arduino-Temperature-Control-Library
-Para más información de la libreria, mirar el siguiente enlace: http://www.milesburton.com/Dallas_Temperature_Control_Library
-
-CONFIGURACIÓN PUERTOS ARDUINO
------------------------------
-
-DIGITALES:
-
 */
 
 

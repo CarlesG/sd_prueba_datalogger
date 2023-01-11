@@ -16,8 +16,8 @@ DIGITALES:
 2 : sensor con cápsula acero inoxidable. y sensor sin capsula DS18B20
 */
 
-#include <OneWire.h>
-#include <DallasTemperature.h>
+#include <OneWire.h>           //https://github.com/PaulStoffregen/OneWire
+#include <DallasTemperature.h> //https://github.com/milesburton/Arduino-Temperature-Control-Library
 
 OneWire ourWire(4); // el pin2 será el bus OneWire
 

@@ -23,9 +23,9 @@ DIGITALES:
 2 : sensor con cápsula acero inoxidable (cable de 3 metros). + sensor sin capsula + sensor acero inoxidable (con cable más corto)
 */
 
-#include <TimeLib.h> // https://github.com/PaulStoffregen/Time
-#include <OneWire.h>
-#include <DallasTemperature.h>
+#include <TimeLib.h> //https://github.com/PaulStoffregen/Time
+#include <OneWire.h> //https://github.com/PaulStoffregen/OneWire
+#include <DallasTemperature.h> //https://github.com/milesburton/Arduino-Temperature-Control-Library
 //#define time_delay 1000 // La temporización no es exacta, tener esto en cuenta. Si colocamos aquí un siete, son ocho segundos de espera entre medida aprox. (segundos)
 const unsigned long time_delay = 1000;
 

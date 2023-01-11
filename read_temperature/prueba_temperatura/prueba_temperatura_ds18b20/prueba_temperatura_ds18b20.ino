@@ -12,7 +12,7 @@ Resolución programable de 9 hasta 12 bits.
 Cada sensor tiene una dirección única de 64 bits.
 
 - Librerías necesarias:
--- One - wire: https://github.com/milesburton/Arduino-Temperature-Control-Library
+ibrary
 -- DallasTemperature: https://github.com/milesburton/Arduino-Temperature-Control-Library
 Para más información de la libreria, mirar el siguiente enlace: http://www.milesburton.com/Dallas_Temperature_Control_Library
 
@@ -23,8 +23,9 @@ DIGITALES:
 2 : sensor con cápsula acero inoxidable.
 
 */
-#include <OneWire.h>
-#include <DallasTemperature.h>
+
+#include <OneWire.h>           //https://github.com/PaulStoffregen/OneWire
+#include <DallasTemperature.h> //https://github.com/milesburton/Arduino-Temperature-Control-Library
 #define time_delay 3000
 
 OneWire ourWire(4); // el pin4 será el bus OneWire
